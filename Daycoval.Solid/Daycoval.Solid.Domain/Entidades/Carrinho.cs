@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Daycoval.Solid.Domain.Entidades
+namespace Daycoval.Solid.Domain.Enums
 {
     public class Carrinho
     {

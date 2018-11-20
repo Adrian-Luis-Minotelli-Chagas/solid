@@ -1,131 +1,76 @@
 ﻿using System;
-using System.Net.Mail;
 using System.Runtime.InteropServices;
-using Daycoval.Solid.Domain.Entidades;
+using Daycoval.Solid.Domain.Enums;
+using Daycoval.Solid.Domain.Interfaces;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    public class Pedido
+    public class Pedido : IPedido
     {
+        private readonly ICarrinho _carrinhoService;
+        private readonly IPagamento _pagamentoService;
+        private readonly IEstoque _estoqueService;
+        private readonly IMail _mailService;
+        private readonly ISms _smsService;
+
+        public Pedido(ICarrinho carrinho, IPagamento pagamento, IEstoque estoqueService, IMail mailService,
+            ISms smsService)
+        {
+            _carrinhoService = carrinho;
+            _pagamentoService = pagamento;
+            _estoqueService = estoqueService;
+            _mailService = mailService;
+            _smsService = smsService;
+        }
+
         public void EfetuarPedido(Carrinho carrinho, DetalhePagamento detalhePagamento, bool notificarClienteEmail,
             bool notificarClienteSms)
         {
-            foreach (var produto in carrinho.Produtos)
+            try
             {
-                if (produto.TipoProduto == TipoProduto.Alimentos)
-                {
-                    produto.ValorImposto = produto.Valor * 0.05M;
-                    carrinho.ValorTotalPedido += (produto.Valor + produto.ValorImposto) * produto.Quantidade;
-                }
-                else
-                {
-                    if (produto.TipoProduto == TipoProduto.Eletronico)
-                    {
-                        produto.ValorImposto = produto.Valor * 0.15M;
-                        carrinho.ValorTotalPedido += (produto.Valor + produto.ValorImposto) * produto.Quantidade;
-                    }
-                    else
-                    {
-                        if (produto.TipoProduto == TipoProduto.Superfulos)
-                        {
-                            produto.ValorImposto = produto.Valor * 0.20M;
-                            carrinho.ValorTotalPedido += (produto.Valor + produto.ValorImposto) * produto.Quantidade;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("O tipo de produto informado não está disponível.");
-                        }
-                    }
-                }
-            }
+                // Parte 1# - Calculo de imposto de produtos e valor total do carrinho.
 
-            if (detalhePagamento.FormaPagamento.Equals(FormaPagamento.CartaoCredito) ||
-                detalhePagamento.FormaPagamento.Equals(FormaPagamento.CartaoDebito))
-            {
-                using (var gatewayPatamento = new GatewayPagamentoService())
-                {
-                    gatewayPatamento.Login = "login";
-                    gatewayPatamento.Senha = "senha";
-                    gatewayPatamento.FormaPagamentoCartao = (FormaPagamentoCartao) detalhePagamento.FormaPagamento;
-                    gatewayPatamento.NomeImpresso = detalhePagamento.NomeImpressoCartao;
-                    gatewayPatamento.AnoExpiracao = detalhePagamento.AnoExpiracao;
-                    gatewayPatamento.MesExpiracao = detalhePagamento.MesExpiracao;
-                    gatewayPatamento.Valor = carrinho.ValorTotalPedido;
+                // Calcula imposto dos produtos do carrinho
+                carrinho.Produtos = _carrinhoService.CalculaImpostoProdutosCarrinho(carrinho.Produtos);
 
-                    gatewayPatamento.EfetuarPagamento();
+                // Calcula o valor total do carrinho
+                carrinho.ValorTotalPedido = _carrinhoService.CalculaValorTotalCarrinho(carrinho.Produtos);
+
+                // Parte 2# - Pagamento do Pedido
+
+                // Realiza o pagamento
+                carrinho.FoiPago = _pagamentoService.EfetuarPagamentoPedido(detalhePagamento, carrinho.ValorTotalPedido);
+
+                // Parte 3# - Solicitação e Entrega de Produto(s)
+                if (!_carrinhoService.CarrinhoFoiPago(carrinho))
+                {
+                    throw new ExternalException("O pagamento não foi efetuado.");
                 }
 
-                InformarPagamento(carrinho);
-            }
+                _carrinhoService.SolicitarProdutosCarrinho(carrinho);
 
-            if (detalhePagamento.FormaPagamento.Equals(FormaPagamento.Dinheiro))
-            {
-                InformarPagamento(carrinho);
-            }
+                carrinho.FoiEntregue = _carrinhoService.EntregarProdutosCarrinho(carrinho);
 
-            var estoque = new EstoqueService();
-
-            if (carrinho.FoiPago)
-            {
-                foreach (var produto in carrinho.Produtos)
+                // Parte 4# - Baixa no estoque
+                if (!_estoqueService.ProdutosCarrinhoEntregue(carrinho))
                 {
-                    estoque.SolicitarProduto(produto);
+                    throw new ExternalException("Os produtos não foram entregues.");
                 }
 
-                EntregarProdutos(carrinho);
-            }
-            else
-            {
-                throw new ExternalException("O pagamento não foi efetuado.");
-            }
+                _carrinhoService.BaixarEstoqueCarrinho(carrinho);
 
-            if (carrinho.FoiEntregue)
-            {
-                foreach (var produto in carrinho.Produtos)
-                {
-                    estoque.BaixarEstoque(produto);
-                }
-            }
-            else
-            {
-                throw new ExternalException("Os produtos não foram entregues.");
-            }
+                // Parte 5# - Notificação de Cliente por e-mail
+                _mailService.notificarClienteEmail(carrinho.Cliente, notificarClienteEmail);
 
-            if (notificarClienteEmail)
-            {
-                if (!string.IsNullOrWhiteSpace(carrinho.Cliente.Email))
-                {
-                    using (var msg = new MailMessage("tiago.dantas@bancodaycoval.com.br", carrinho.Cliente.Email))
-                    using (var smtp = new SmtpClient("servidor.smtp"))
-                    {
-                        msg.Subject = "Dados da sua compra";
-                        msg.Body = $"Obrigado por efetuar sua compra conosco.";
 
-                        smtp.Send(msg);
-                    }
-                }
+                // Parte 5# - Notificação de Cliente por SMS
+                _smsService.NotificarClienteSms(carrinho.Cliente, notificarClienteSms);
             }
-
-            if (notificarClienteSms)
+            catch (Exception)
             {
-                if (!string.IsNullOrWhiteSpace(carrinho.Cliente.Celular))
-                {
-                    var smsService = new SmsService();
-                    smsService.Mensagem = "Obrigado por sua compra";
-                    smsService.Celular = carrinho.Cliente.Celular;
-                    smsService.EnviarSms();
-                }
+                throw;
             }
         }
 
-        private void EntregarProdutos(Carrinho carrinho)
-        {
-            carrinho.FoiEntregue = true;
-        }
-
-        private void InformarPagamento(Carrinho carrinho)
-        {
-            carrinho.FoiPago = true;
-        }
     }
 }
