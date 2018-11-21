@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daycoval.Solid.Domain", "Daycoval.Solid.Domain\Daycoval.Solid.Domain.csproj", "{E6CBAE77-CEA4-4C9F-AD74-17B8C8612756}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daycoval.Solid.Domain", "Daycoval.Solid.Domain\Daycoval.Solid.Domain.csproj", "{E6CBAE77-CEA4-4C9F-AD74-17B8C8612756}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Daycoval.Solid.Test", "Daycoval.Solid.Test\Daycoval.Solid.Test.csproj", "{CD90AD8B-B246-4D29-B451-3B44CD705803}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,15 @@ Global
 		{E6CBAE77-CEA4-4C9F-AD74-17B8C8612756}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6CBAE77-CEA4-4C9F-AD74-17B8C8612756}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6CBAE77-CEA4-4C9F-AD74-17B8C8612756}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD90AD8B-B246-4D29-B451-3B44CD705803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD90AD8B-B246-4D29-B451-3B44CD705803}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD90AD8B-B246-4D29-B451-3B44CD705803}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD90AD8B-B246-4D29-B451-3B44CD705803}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96213085-9DCD-477A-A294-98BF23AC5812}
 	EndGlobalSection
 EndGlobal
