@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Interfaces
 {
-    interface IPedido
+    public interface IPedido
     {
         void EfetuarPedido(Carrinho carrinho, DetalhePagamento detalhePagamento, bool notificarClienteEmail,
             bool notificarClienteSms);

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Modelos
 {
-    class ProdutoImpostoSuperfulos : ProdutoImposto
+    public class ProdutoImpostoSuperfulos : ProdutoImposto
     {
         private readonly decimal taxa = 0.20M;
 

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    class PagamentoService : IPagamento
+    public class PagamentoService : IPagamento
     {
         private readonly IGatewayPagamento _gatewayPagamentoService;
 

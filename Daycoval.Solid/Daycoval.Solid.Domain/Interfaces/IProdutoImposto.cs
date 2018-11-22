@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Interfaces
 {
-    interface IProdutoImposto
+    public interface IProdutoImposto
     {
         ProdutoImposto ObtemProdutoImpostoPorTipo(TipoProduto tipoProduto);
     }

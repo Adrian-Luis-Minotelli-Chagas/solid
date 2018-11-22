@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    class CarrinhoService : ICarrinho
+    public class CarrinhoService : ICarrinho
     {
         private readonly IProdutoImposto _produtoImpostoService;
         private readonly IEstoque _estoqueService;

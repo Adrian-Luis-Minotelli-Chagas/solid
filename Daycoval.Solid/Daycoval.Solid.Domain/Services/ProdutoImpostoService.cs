@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    class ProdutoImpostoService : IProdutoImposto
+    public class ProdutoImpostoService : IProdutoImposto
     {
         public ProdutoImposto ObtemProdutoImpostoPorTipo(TipoProduto tipoProduto) 
         {

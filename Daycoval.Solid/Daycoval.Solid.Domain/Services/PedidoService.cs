@@ -5,7 +5,7 @@ using Daycoval.Solid.Domain.Interfaces;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    public class Pedido : IPedido
+    public class PedidoService : IPedido
     {
         private readonly ICarrinho _carrinhoService;
         private readonly IPagamento _pagamentoService;
@@ -13,7 +13,7 @@ namespace Daycoval.Solid.Domain.Services
         private readonly IMail _mailService;
         private readonly ISms _smsService;
 
-        public Pedido(ICarrinho carrinho, IPagamento pagamento, IEstoque estoqueService, IMail mailService,
+        public PedidoService(ICarrinho carrinho, IPagamento pagamento, IEstoque estoqueService, IMail mailService,
             ISms smsService)
         {
             _carrinhoService = carrinho;

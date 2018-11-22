@@ -49,11 +49,26 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="EntidadesTeste\ClienteTest.cs" />
+    <Compile Include="ModelosTeste\ProdutoImpostoAlimentosTest.cs" />
+    <Compile Include="ModelosTeste\ProdutoImpostoEletronicoTest.cs" />
+    <Compile Include="ModelosTeste\ProdutoImpostoSuperfulosTest.cs" />
+    <Compile Include="ServicesTeste\CarrinhoServiceTest.cs" />
+    <Compile Include="ServicesTeste\MailServiceTest.cs" />
+    <Compile Include="ServicesTeste\SmsServiceTest.cs" />
+    <Compile Include="ServicesTeste\ProdutoImpostoServiceTest.cs" />
+    <Compile Include="ServicesTeste\PagamentoServiceTest.cs" />
+    <Compile Include="ServicesTeste\PedidoServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Daycoval.Solid.Domain\Daycoval.Solid.Domain.csproj">
+      <Project>{e6cbae77-cea4-4c9f-ad74-17b8c8612756}</Project>
+      <Name>Daycoval.Solid.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Daycoval.Solid.Domain.Services
 {
-    class MailService : IMail
+    public class MailService : IMail
     {
         public void notificarClienteEmail(Cliente cliente, bool notificarClienteEmail)
         {
